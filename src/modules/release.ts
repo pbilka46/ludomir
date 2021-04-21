@@ -1,0 +1,1 @@
+export const createHeader = (version: string, date: any) => `${version} (${date})\n----------------\n`;

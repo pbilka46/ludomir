@@ -1,0 +1,44 @@
+{
+  "name": "ludomir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./build/index.js",
+  "bin": {
+    "ludo": "./build/index.js",
+    "ludomir": "./build/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint --project tsconfig.json",
+    "build": "npm run lint && tsc",
+    "local": "sudo npm i -g && ludo"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "chalk": "^4.1.0",
+    "child_process": "^1.0.2",
+    "clipboardy": "^2.3.0",
+    "dayjs": "^1.10.4",
+    "figlet": "^1.5.0",
+    "line-reader": "^0.4.0",
+    "minimist": "^1.2.5",
+    "readline": "^1.3.0",
+    "semver": "^7.3.5",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.33",
+    "@types/chalk": "^2.2.0",
+    "@types/line-reader": "0.0.33",
+    "@types/minimist": "^1.2.1",
+    "@types/node": "^14.14.41",
+    "@types/semver": "^7.3.4",
+    "@types/uuid": "^8.3.0",
+    "jest": "^26.6.3",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.4"
+  }
+}
