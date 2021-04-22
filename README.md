@@ -27,7 +27,7 @@ ludomir list
 ```
 - update `RELEASES.rst` file with release messages under `version`:
 ```shell
-ludomir update 0.1.1
+ludomir release 0.1.1
 ```
 The command will update RELEASES.rst file and copy the whole release content to your clipboard, so it's ready to post!
 It will also remove release messages under temporary directory.
