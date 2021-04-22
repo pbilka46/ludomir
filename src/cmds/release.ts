@@ -3,23 +3,25 @@ import semver, {SemVer} from "semver";
 import BlueBird from "bluebird";
 import lineReader from "line-reader";
 import fs from "fs";
+import dayjs from "dayjs";
 import clipboardy from "clipboardy";
 
 import {releasesDir, releasesFile, toolName, toolNameCapitalized} from "../setup";
 import { init}  from "./init";
-import dayjs from "dayjs";
 import {createHeader} from "../modules/release";
 
 const semanticVersionPattern = /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?()/;
 
-// @ts-ignore
-const calculateLine = (lines) => {
-    let index = 0;
-    lines.forEach((line: string) => {
-        if ((line.startsWith('..') && line !== '\n')) {
-            index++;
-        }
-    })
+const readLines = () => {
+    const lines = [] as Array<string>;
+
+    const eachLine = BlueBird.promisify(lineReader.eachLine);
+    // @ts-ignore
+    return eachLine(releasesFile, function(line: any) {
+        lines.push(line);
+    }).then(function () {
+      return lines;
+    });
 }
 
 const readLastVersion = (): SemVer => {
@@ -39,24 +41,38 @@ const readLastVersion = (): SemVer => {
 }
 
 const createReleaseEntry = (version: string, entries: Array<string>) => {
-    let release = "";
-    entries.forEach((entry: string) => {
-        release += `-${entry}\n`
+    let rls = "";
+    entries.forEach((entry: string, index:number) => {
+        rls += `-${entry}`
+        if (index < entries.length) {
+            rls += "\n"
+        }
     })
-    return `${createHeader(version, dayjs().format("YYYY-MM-DD"))}${release}`;
+    return `${createHeader(version, dayjs().format("YYYY-MM-DD"))}${rls}`;
 }
 
+const mapLinesToContent = (lines: Array<string>) => {
+    let content = "";
+    lines.forEach((line: string, index: number) => {
+        content += line;
+        if (index < lines.length) {
+            content += "\n"
+        }
+    })
 
-export const update = async (...args: string[]) => {
+    return content;
+}
+
+export const release = async (...args: string[]) => {
     const [version] = args;
     if (!version) {
-        console.log(chalk.blueBright("Usage: update [VERSION]"));
+        console.log(chalk.blueBright("Usage: release [VERSION]"));
         return ;
     }
 
     if (!semver.valid(version)) {
         console.log(chalk.redBright(`${toolNameCapitalized} found invalid version. Make sure you follow semantic versioning - {major.minor.patch}`))
-        console.log(chalk.blueBright(`Example: ${toolName} update 2.3.9`));
+        console.log(chalk.blueBright(`Example: ${toolName} release 2.3.9`));
         return ;
     }
 
@@ -64,14 +80,14 @@ export const update = async (...args: string[]) => {
     const lastVersion = await readLastVersion();
 
     if (semver.lte(version, lastVersion)) {
-        console.log(chalk.blueBright(`Provided version (${version}) is lower than the last one. Make sure you are upgrading.`));
+        console.log(chalk.redBright(`Provided version (${version}) is lower than the last one. Make sure you are upgrading.`));
         console.log(chalk.blueBright(`Last version: ${lastVersion}`));
 
         return ;
     } else {
 
         if (!fs.existsSync(releasesFile)) {
-            console.log(chalk.blueBright(`${toolNameCapitalized} Ludo couldn't find ${releasesFile} file. Initializing...`));
+            console.log(chalk.blueBright(`${toolNameCapitalized} couldn't find ${releasesFile} file. Initializing...`));
             init();
         }
 
@@ -84,22 +100,28 @@ export const update = async (...args: string[]) => {
                 try {
                     const data = fs.readFileSync(filePath, 'utf8')
                     entries.push(data);
-                    fs.unlinkSync(filePath);
+                    // fs.unlinkSync(filePath);
                 } catch (err) {
                 }
-            })
+            });
 
             if (entries.length === 0) {
-                console.log(chalk.blueBright(`${toolNameCapitalized} could not find any messages to make a release.`));
+                console.log(chalk.redBright(`${toolNameCapitalized} could not find any messages to make a release.`));
+                console.log(chalk.blueBright(`Make sure you have added some messages before making release.`));
+                console.log(chalk.blueBright(`To add new message, type ${toolName} add "your message"`));
             }
 
             if (entries.length > 0) {
-                const before = fs.readFileSync(`${releasesFile}`, 'utf8')
-                const release = createReleaseEntry(version, entries)
-                const next = `\n${release}${before}\n`;
-                fs.writeFileSync(releasesFile, next);
-                clipboardy.writeSync(release)
-                console.log(chalk.blueBright(release));
+                const newRelease = createReleaseEntry(version, entries)
+
+                const currentLines = await readLines();
+                const beforeContent = mapLinesToContent(currentLines.slice(0, 4));
+                const nextContent = mapLinesToContent(currentLines.slice(4, currentLines.length - 1));
+                const finalContent = `${beforeContent}${newRelease}${nextContent}`;
+
+                fs.writeFileSync(releasesFile, finalContent);
+                clipboardy.writeSync(newRelease)
+                console.log(chalk.blueBright(newRelease));
                 console.log(chalk.blueBright(`Ludo updated ${releasesFile} with the content above and already copied to clipboard.`))
             }
         })

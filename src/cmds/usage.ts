@@ -1,5 +1,22 @@
 import chalk from "chalk";
 import { releasesFile, toolNameCapitalized, toolName, releasesDir } from "../setup";
+import commands from "../modules/commands";
+
+
+
+const getBlankSpaces = (commandLength: number) => {
+    const commandFullLength = Object.keys(commands).map(cmd => {
+        return commands[cmd].options.join().length + cmd.length
+    })
+    const max = Math.max(...commandFullLength);
+
+    let blankSpaces = "";
+    for (let i = 0; i < (max - commandLength); i++) {
+        blankSpaces += " ";
+    }
+
+    return blankSpaces;
+}
 
 export const usage = () => {
     console.log(
@@ -15,13 +32,17 @@ export const usage = () => {
 
     console.log(chalk.blueBright(`Usage: ${toolName} [ACTION]\n`));
     console.log(chalk.blueBright("Actions:\n"));
-    console.log(chalk.blueBright(`init                   - Initializes ${releasesFile} file`));
-    console.log(chalk.blueBright("add [MESSAGE(s)]       - Adds message(s) to the new release"));
-    console.log(chalk.blueBright("list.ts                - Lists added message(s) to release"));
-    console.log(chalk.blueBright(`update [VERSION|x.y.z] - Updates ${releasesFile} file with new messages under [VERSION]. Clears temporary messages.\n`));
 
-    console.log(chalk.blueBright("Examples:\n"));
+    Object.keys(commands).forEach(command => {
+        const current = commands[command];
+        const opts = "options" in current ? current.options : [];
+        const blankSpaces = getBlankSpaces(command.length + opts.join().length)
+        console.log(chalk.blueBright(`${command} ${opts.join()} ${blankSpaces}  -${current.description}`));
+    })
+
+
+    console.log(chalk.blueBright("\nExamples:\n"));
     console.log(chalk.blueBright(`${toolName} init`));
     console.log(chalk.blueBright(`${toolName} add "Initialized ${toolNameCapitalized}" "something2"`));
-    console.log(chalk.blueBright(`${toolName} update 0.1.1`));
+    console.log(chalk.blueBright(`${toolName} release 0.1.1`));
 }

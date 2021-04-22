@@ -2,39 +2,22 @@
 const chalk = require('chalk');
 const figlet = require('figlet');
 
-import { toolName } from "./setup";
-import { usage, init, add, list, update  } from "./cmds";
+import { toolNameDefault, ludoASCII } from "./setup";
+import { usage } from "./cmds";
+import commands from "./modules/commands";
 
-const ludo = `
-  q-p
- /   \\
-(     )
- \`-(-'
-    )
-`
-
-interface Commands {
-    [key: string]: (args?: Array<string>) => void
-}
 
 const runCommand = (command: string) => {
-    const commands = {
-        "init": () => init(),
-        "add": (args: Array<string>) => add(...args),
-        "list": (args: Array<string>) => list(...args),
-        "update": (args: Array<string>) => update(...args),
-    } as Commands;
-
-    return commands.hasOwnProperty(command) ? commands[command] : usage;
+    return commands.hasOwnProperty(command) ? commands[command].run : usage;
 }
 
 const run = () => {
     console.log(
-        chalk.blueBright(
-            figlet.textSync(toolName.split("").join("     "))
+        chalk.bgBlueBright.bgBlue(
+            figlet.textSync(toolNameDefault.split("").join("     "))
         ),
         chalk.blueBright(
-            `${ludo}\n`
+            `${ludoASCII}\n`
         ),
     );
 

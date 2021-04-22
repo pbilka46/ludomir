@@ -25,5 +25,5 @@ export const add = (...args: string[]) => {
         }
     })
 
-    console.log(chalk.blueBright(`Ludomir added ${count} messages.`));
+    console.log(chalk.blueBright(`Ludomir added ${count} message(s).`));
 }
