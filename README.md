@@ -14,7 +14,16 @@ Strongly inspired by [PyHistory](https://github.com/beregond/pyhistory) library,
 ```
   
 ## Features
-The toll can start wih `ludomir` or simplified `ludo`.
+The commands can start wih `ludomir` or simplified `ludo`.
+
+- initialize `RELEASES.txt` file 
+```shell
+ludomir init "Title"
+```
+Maybe your project already has a version, then:
+```shell
+ludomir init "Title" 2.3.9
+```
 - add release message(s):
 ```shell
 ludomir add 'Initialized ludo' 'Fixed xyz bug'
