@@ -100,7 +100,7 @@ export const release = async (...args: string[]) => {
                 try {
                     const data = fs.readFileSync(filePath, 'utf8')
                     entries.push(data);
-                    // fs.unlinkSync(filePath);
+                    fs.unlinkSync(filePath);
                 } catch (err) {
                 }
             });
