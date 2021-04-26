@@ -13,3 +13,4 @@ export const ludoASCII = `
  \`-(-'
     )
 `
+//Art by Hayley Jane Wakenshaw

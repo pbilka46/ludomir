@@ -19,6 +19,12 @@ const getInitialHeader = (title: string, version: string) => {
 export const init = (...args: string[]) => {
     const [title, version] = args;
 
+    if (!title) {
+        console.log(chalk.redBright(`Missing ${releasesFile} file title.`))
+        console.log(chalk.blueBright(`Example: ${toolName} init "MyProject" 2.3.9 (optional)`));
+        return ;
+    }
+
     if (!semver.valid(version)) {
         console.log(chalk.redBright(`${toolNameCapitalized} found invalid version. Make sure you follow semantic versioning - {major.minor.patch}`))
         console.log(chalk.blueBright(`Example: ${toolName} release 2.3.9`));

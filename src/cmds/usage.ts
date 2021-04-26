@@ -2,8 +2,6 @@ import chalk from "chalk";
 import { releasesFile, toolNameCapitalized, toolName, releasesDir } from "../setup";
 import commands from "../modules/commands";
 
-
-
 const getBlankSpaces = (commandLength: number) => {
     const commandFullLength = Object.keys(commands).map(cmd => {
         return commands[cmd].options.join().length + cmd.length

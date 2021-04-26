@@ -11,7 +11,7 @@ interface Commands {
 }
 const commands = {
     "init": {
-        options: [`[VERSION?] (options def. ${initialVersion})`],
+        options: [`[TITLE] [VERSION?] (options def. ${initialVersion})`],
         description: `Initializes ${releasesFile} file`,
         run: (args: Array<string>) => init(...args)
     },
