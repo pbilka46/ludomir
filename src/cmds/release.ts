@@ -87,8 +87,9 @@ export const release = async (...args: string[]) => {
     } else {
 
         if (!fs.existsSync(releasesFile)) {
-            console.log(chalk.blueBright(`${toolNameCapitalized} couldn't find ${releasesFile} file. Initializing...`));
-            init();
+            console.log(chalk.redBright(`${toolNameCapitalized} couldn't find ${releasesFile} file.`));
+            console.log(chalk.blueBright(`Run initialization command for a ${releasesFile} file.`));
+            return ;
         }
 
         fs.readdir(releasesDir, async (err: any, files: any[]) => {
