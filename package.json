@@ -1,12 +1,23 @@
 {
   "name": "ludomir",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "CLI to maintain RELEASES.rst file per project.",
   "homepage": "https://github.com/pbilka46/ludomir",
+  "author": "patryk.bilka",
+  "license": "ISC",
   "bugs": {
     "url" : "https://github.com/pbilka46/ludomir/issues",
     "email" : "patryk.bilka@gmail.com"
   },
+  "keywords": [
+    "history",
+    "pyhi",
+    "pyhistory",
+    "ludo",
+    "ludomir",
+    "releases",
+    "changelog"
+  ],
   "files": [
     "build"
   ],
@@ -21,8 +32,6 @@
     "build": "npm run lint && tsc",
     "local": "sudo npm i -g && ludo"
   },
-  "author": "patryk.bilka",
-  "license": "ISC",
   "dependencies": {
     "bluebird": "^3.7.2",
     "chalk": "^4.1.0",
