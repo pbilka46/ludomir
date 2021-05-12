@@ -10,6 +10,9 @@ import commands from "./modules/commands";
 const runCommand = (command: string) => {
     return commands.hasOwnProperty(command) ? commands[command].run : usage;
 }
+// deleting
+// fix bug with blank space after release
+// add date timestamp to correctly display messages in order
 
 const run = () => {
     console.log(

@@ -2,25 +2,35 @@ import fs from "fs";
 import {releasesDir} from "../setup";
 import chalk from "chalk";
 
-export const list = (...args: string[]) => {
-    fs.readdir(releasesDir, (err: any, files: any[]) => {
-        if (err) throw err;
+export interface ReleaseEntry {
+    fileName: string,
+    content: string
+}
 
-        const entries: string[] = [];
-        files.forEach((file: any) => {
-            try {
-                const data = fs.readFileSync(`${releasesDir}/${file}`, 'utf8')
-                entries.push(data);
-            } catch (err) {
-                console.error(err)
-            }
-        })
-
-        if (entries.length > 0) {
-            console.log(chalk.blueBright("Ludo found history entries for you:\n"));
-            entries.forEach(entry => console.log(chalk.blueBright(entry)));
-        } else {
-            console.log(chalk.blueBright(`Ludo couldn't find anything to make a release.`));
+export const getReleaseEntries = () => {
+    const entries: Array<ReleaseEntry> = [];
+    const fileNames = fs.readdirSync(releasesDir);
+    fileNames.forEach(fileName => {
+        try {
+            const content = fs.readFileSync(`${releasesDir}/${fileName}`, 'utf8')
+            entries.push({
+                fileName,
+                content
+            });
+        } catch (err) {
+            console.error(err)
         }
     })
+
+    return entries;
+}
+
+export const list = (...args: string[]) => {
+    const entries = getReleaseEntries();
+    if (entries.length > 0) {
+        console.log(chalk.blueBright("Ludo found history entries for you:\n"));
+        entries.forEach(entry => console.log(chalk.blueBright(entry.content)));
+    } else {
+        console.log(chalk.blueBright(`Ludo couldn't find any messages to make a release.`));
+    }
 }
