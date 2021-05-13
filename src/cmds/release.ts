@@ -98,8 +98,6 @@ export const release = async (...args: string[]) => {
 
             const entries = await getReleaseEntries();
 
-            console.log(entries);
-
             if (entries.length === 0) {
                 console.log(chalk.redBright(`${toolNameCapitalized} could not find any messages to make a release.`));
                 console.log(chalk.blueBright(`Make sure you have added some messages before making release.`));
