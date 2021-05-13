@@ -1,4 +1,4 @@
-import {add, init, list, release} from "../cmds";
+import {add, init, list, release, deleteMessage} from "../cmds";
 import {releasesFile} from "../setup";
 import { initialVersion } from "../cmds/init";
 
@@ -6,7 +6,7 @@ interface Commands {
     [key: string]: {
         options: Array<string>,
         description: string,
-        run:   (args?: Array<string>) => void
+        run:   (args?: Array<string> | Array<number>) => void
     }
 }
 const commands = {
@@ -24,6 +24,11 @@ const commands = {
         options: [],
         description: `Lists added message(s) to release`,
         run: (args: Array<string>) => list(...args),
+    },
+    "delete": {
+        options: [],
+        description: `Deletes added message(s). Run first to map them.`,
+        run: (args: Array<number>) => deleteMessage(...args),
     },
     "release": {
         options: ["[VERSION]"],
