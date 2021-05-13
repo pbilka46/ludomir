@@ -56,7 +56,7 @@ export const deleteMessage = async (...args: number[]) => {
         entries.forEach((entry: ReleaseEntry) => {
             console.log(chalk.blueBright(`${entry.content}`));
         });
-        
+
         const proceed = await shouldProceed(chalk.redBright("Are you sure about that? (y/n)")) as string;
 
         if (proceed.toLowerCase() === "y") {

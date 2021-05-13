@@ -7,6 +7,15 @@ export interface ReleaseEntry {
     content: string
 }
 
+
+
+export const sortEntries = (a: ReleaseEntry, b: ReleaseEntry) => {
+    const left = parseInt(a.content.split("_")[0]);
+    const right = parseInt(b.content.split("_")[0]);
+    return (left - right);
+}
+
+
 export const getReleaseEntries = () => {
     const entries: Array<ReleaseEntry> = [];
     const fileNames = fs.readdirSync(releasesDir);
@@ -22,7 +31,18 @@ export const getReleaseEntries = () => {
         }
     })
 
-    return entries;
+    return entries.sort(sortEntries);
+}
+
+export const removeReleaseEntries = () => {
+    const fileNames = fs.readdirSync(releasesDir);
+    fileNames.forEach(fileName => {
+        try {
+            fs.unlinkSync(`${releasesDir}/${fileName}`);
+        } catch (err) {
+            console.error(err)
+        }
+    })
 }
 
 export const list = (...args: string[]) => {
