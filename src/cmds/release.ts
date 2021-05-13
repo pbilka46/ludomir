@@ -9,6 +9,7 @@ import clipboardy from "clipboardy";
 import {releasesDir, releasesFile, toolName, toolNameCapitalized} from "../setup";
 import { init}  from "./init";
 import {createHeader} from "../modules/release";
+import {getReleaseEntries, ReleaseEntry, removeReleaseEntries, sortEntries} from "./list";
 
 const semanticVersionPattern = /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?()/;
 
@@ -40,15 +41,15 @@ const readLastVersion = (): SemVer => {
     });
 }
 
-const createReleaseEntry = (version: string, entries: Array<string>) => {
+const createReleaseEntry = (version: string, entries: Array<ReleaseEntry>) => {
     let rls = "";
-    entries.forEach((entry: string, index:number) => {
-        rls += `-${entry}`
+    entries.forEach((entry: ReleaseEntry, index:number) => {
+        rls += `-${entry.content}`
         if (index < entries.length) {
             rls += "\n"
         }
     })
-    return `${createHeader(version, dayjs().format("YYYY-MM-DD"))}${rls}`;
+    return `${createHeader(version, dayjs().format("YYYY-MM-DD"))}${rls}\n`;
 }
 
 const mapLinesToContent = (lines: Array<string>) => {
@@ -95,16 +96,9 @@ export const release = async (...args: string[]) => {
         fs.readdir(releasesDir, async (err: any, files: any[]) => {
             if (err) throw err;
 
-            const entries: string[] = [];
-            files.forEach((file: any) => {
-                const filePath = `${releasesDir}/${file}`;
-                try {
-                    const data = fs.readFileSync(filePath, 'utf8')
-                    entries.push(data);
-                    fs.unlinkSync(filePath);
-                } catch (err) {
-                }
-            });
+            const entries = await getReleaseEntries();
+
+            console.log(entries);
 
             if (entries.length === 0) {
                 console.log(chalk.redBright(`${toolNameCapitalized} could not find any messages to make a release.`));
@@ -122,6 +116,7 @@ export const release = async (...args: string[]) => {
 
                 fs.writeFileSync(releasesFile, finalContent);
                 clipboardy.writeSync(newRelease)
+                removeReleaseEntries();
                 console.log(chalk.blueBright(newRelease));
                 console.log(chalk.blueBright(`Ludo updated ${releasesFile} with the content above and already copied to clipboard.`))
             }
